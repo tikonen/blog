@@ -1,4 +1,4 @@
--- Blog.hs
+-- Push.hs
 import Hex
 import Text.JSON as JSON
 import qualified Data.ByteString as B
