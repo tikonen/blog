@@ -128,6 +128,17 @@ function SlotGame() {
 	$('h1').text('Rolling!');
 	game.restart();
     });
+
+    // Show reels for debugging
+    var toggleReels = 1;
+    $('#debug').click(function() {
+	toggleReels = 1 - toggleReels;
+	if ( toggleReels ) {
+	    $('#reels').css('overflow', 'hidden' );
+	} else {
+	    $('#reels').css('overflow', 'visible' );
+	}
+    });
 }
 
 function Game() {
@@ -328,11 +339,11 @@ Game.prototype.draw = function( force ) {
 	    if (this[stopped]) {
 		this[speedp] = 0;
 		var c = this[resultp]; // get stop location
-		this[stopped] = false;
 		this[offsetp] = -(c * SLOT_HEIGHT);
+
 		if (this[offsetp] + DRAW_OFFSET > 0) {
 		    // reset back to beginning
-		    this[offsetp] = -this.resetOffset + SLOT_HEIGHT * 3 - DRAW_OFFSET;
+		    this[offsetp] = -this.resetOffset + SLOT_HEIGHT * 3;
 		}
 
 	    } else {
