@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  <meta name="interface" content="desktop" />
+
+  <title>Drive</title>
+  <link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'/>
+  <link type="text/css" rel="stylesheet" href="css/reset.css" />
+  <link type="text/css" rel="stylesheet" href="css/drive.css" />
+</head>
+<body>
+  <div id="container">
+	<div id="header">
+	  <img src="img/html5.png"/>
+	  <span>Too Fast Too HTML5!</span>
+	</div>
+	<div id="progress">
+	  <div id="indicator"></div>
+	</div>
+	<div id="area">
+	  <div id="finish">
+		<h1>FINISH</h1>
+		<div class="flag" id="flag1"></div>
+		<div class="flag" id="flag2"></div>
+	  </div>
+	  <div id="road"></div>
+	  <canvas id="canvas1"></canvas>
+	</div>	
+	<div id="continue">
+       Congrats!
+	</div>
+	<div id="hud">Click to steer!</div>
+  </div>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+  <script type="text/javascript" src="js/drive.js"></script>
+  <script type="text/javascript">$(function() { DriveGame(); });</script>
+</body>
+</html>
