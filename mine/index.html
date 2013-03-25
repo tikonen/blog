@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <title>AppleSweeper</title>
+	<link href='http://fonts.googleapis.com/css?family=Slackey' rel='stylesheet' type='text/css'>
+    <link type="text/css" rel="stylesheet" href="css/reset.css" />
+    <link type="text/css" rel="stylesheet" href="css/style.css" />
+  	<style type="text/css">
+	</style>
+</head>
+<body>
+  <div id="container">
+	<div id="score">
+	  <h1 id="blurb">Amazing!</h1>
+	  <h1 style="font-size:medium">Score: <span id="finalscore">0</span></h1>
+	  <div class="button">OK</div>
+	</div>
+	<canvas id="canvas"></canvas>
+	<div id="hud">Score: <span id="number">0</span> 
+	<div style="float:right"><img src="img/apple.png"/> x <span id="togo"></span><div></div>
+  </div>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+  <script type="text/javascript" src="js/game.js"></script>
+</body>
+</html>
