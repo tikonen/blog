@@ -1,0 +1,5 @@
+Generates self signed certificate
+
+openssl genrsa -out server_key.pem 1024 
+openssl req -new -key server_key.pem -out certrequest.csr 
+openssl x509 -req -in certrequest.csr -signkey server_key.pem -out server_cert.pem

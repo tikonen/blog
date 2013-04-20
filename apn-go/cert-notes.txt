@@ -1,0 +1,25 @@
+How to export .pem certificates from Apple Keytool
+
+http://blog.boxedice.com/2010/06/05/how-to-renew-your-apple-push-notification-push-ssl-certificate/
+
+$ ls -l
+total 16
+-rw-r--r-- 1 teemu teemu 3165 2010-12-04 13:34 apn-teemuikonen-cert.p12
+-rw-r--r-- 1 teemu teemu 3197 2010-12-04 13:34 apn-teemuikonen-key.p12
+
+$ openssl pkcs12 -clcerts -nokeys -out cert.pem -in apn-teemuikonen-cert.p12 
+Enter Import Password:
+MAC verified OK
+
+$ openssl pkcs12 -nocerts -out key.pem -in apn-teemuikonen-key.p12 
+Enter Import Password:
+MAC verified OK
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+
+$ openssl rsa -in key.pem -out key-noenc.pem
+Enter pass phrase for key.pem:
+writing RSA key
+
+
+
