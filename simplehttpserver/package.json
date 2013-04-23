@@ -1,0 +1,14 @@
+{
+  "name": "simplehttpserver",
+  "description": "Simple HTTP Server for static files",
+  "author": "Teemu Ikonen <teemu.ikonen@ıki.fi>",
+  "version": "0.0.1",
+  "bin": "./cli.js",
+  "dependencies": {
+      "send": ">=0.1.0",
+      "express": ">=3.0.0",
+      "async": ">= 0.2.6"
+  },
+  "engine": "node >= 0.8.0"
+}
+
