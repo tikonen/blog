@@ -2,6 +2,7 @@ var express = require('express'),
     path = require('path'),
     url = require('url'),
     fs = require('fs'),
+    util = require('util'),
     async = require('async'),
     send = require('send');
 
@@ -12,6 +13,14 @@ var dir = process.argv[2] || process.cwd();
 dir = path.resolve( dir );
 mainapp.use(express.logger());
 mainapp.use(express.static( dir ));
+
+// Add any dynamic handlers here
+//mainapp.get('/ajax', function(req, res) {
+//   res.send('Query: ' + util.inspect(req.query));
+//});
+//mainapp.post('/test', function(req, res) {
+//   res.send('Parameters: ' + util.inspect(req.body));
+//});
 
 // Catch all function when static server did not find any file to serve. In case requested
 // file matched directory, this tries to find first index.html and if that fails it builds
