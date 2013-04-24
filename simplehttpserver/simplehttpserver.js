@@ -8,10 +8,15 @@ var express = require('express'),
 
 var mainapp = express();
 
+// Bodyparser parses HTTP POST parameters and JSON payload
 mainapp.use(express.bodyParser());
+
+// Logger for requests
+mainapp.use(express.logger());
+
+// Serve either current or directory given as argument
 var dir = process.argv[2] || process.cwd();
 dir = path.resolve( dir );
-mainapp.use(express.logger());
 mainapp.use(express.static( dir ));
 
 // Add any dynamic handlers here
@@ -46,7 +51,6 @@ mainapp.get('*', function(req, res) {
                // No index.html found, build directory listing
                fs.readdir(pathname, function(err, list) {
                   if ( err ) return res.send(404);
-                  res.setHeader('Content-Type', 'text/html');
                   return directoryHTML( res, req.url, pathname, list );
                });
            }
@@ -54,10 +58,12 @@ mainapp.get('*', function(req, res) {
     });
 });
 
+// Reads directory content and builds HTML response
 function directoryHTML( res, urldir, pathname, list ) {
     var ulist = [];
 
     function sendHTML( list ) {
+        res.setHeader('Content-Type', 'text/html');
         res.send('<!DOCTYPE html>' +
             '<html>\n' +
             '<title>Directory listing for '+urldir+'</title>\n' +
