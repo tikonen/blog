@@ -292,15 +292,7 @@ Game.prototype.update = function() {
 	break;
     case 6: // check results
 	var ec = 0;
-	var that = this;
 
-	var energye = $('#results #score');
-	function _add_win( delay, score ) {
-
-	    setTimeout(function() {
-
-	    }, delay * 1000 );
-	}
 	$('#results').show();
 	if (that.items1[that.result1].id == 'gold-64') {
 	    ec++;
