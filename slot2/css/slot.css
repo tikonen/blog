@@ -182,3 +182,9 @@ html , body
     background-image:-webkit-gradient(linear, left top, left bottom, from(#ffb133), to(#b3671a));
 }
 
+#audio_debug {
+    top: 60px;
+    position: relative;
+    text-align: center;
+    padding: 10px;
+}

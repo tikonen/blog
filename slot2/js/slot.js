@@ -63,7 +63,6 @@ function _initWebAudio( AudioContext, format, audios, callback ) {
 
     var context = new AudioContext();
 
-    // Webaudio is available, use it
     function _preload( asset ) {
         var request = new XMLHttpRequest();
         request.open('GET',  'audio/' + asset.id + '.' + format, true);
@@ -71,7 +70,6 @@ function _initWebAudio( AudioContext, format, audios, callback ) {
 
         request.onload = function() {
             context.decodeAudioData(request.response, function(buffer) {
-                dogBarkingBuffer = buffer;
 
                 asset.play = function() {
                     var source = context.createBufferSource(); // creates a sound source
@@ -87,12 +85,15 @@ function _initWebAudio( AudioContext, format, audios, callback ) {
                 _check();
 
             }, function(err) {
+                asset.play = function() {};
                 _check(err, asset.id);
             });
         };
-        request.onrror = function(err) {
+        request.onerror = function(err) {
+            asset.play = function() {};
             _check(err, asset.id);
         };
+        // kick off load
         request.send();
     }
     var loadc = 0;
@@ -111,19 +112,12 @@ function _initWebAudio( AudioContext, format, audios, callback ) {
 }
 
 function _initHTML5Audio( format, audios, callback ) {
-    // Use normal Audio element
-    if ( !window.Audio ) {
-        // audio not supported
-        audios.forEach(function(item) {
-            item.play = function() {}; // dummy play
-        });
-        callback();
-    }
-    // Use Audio API
+
     function _preload( asset ) {
         asset.audio = new Audio( 'audio/' + asset.id + '.' + format);
         asset.audio.preload = 'auto';
         asset.audio.addEventListener("loadeddata", function() {
+            // Loaded ok, set play function in object and set default volume
             asset.play = function() {
                 asset.audio.play();
             };
@@ -133,8 +127,10 @@ function _initHTML5Audio( format, audios, callback ) {
         }, false);
 
         asset.audio.addEventListener("error", function(err) {
-            _check(err, asset.id);
+            // Failed to load, set dummy play function
             asset.play = function() {}; // dummy
+
+            _check(err, asset.id);
         }, false);
 
     }
@@ -150,7 +146,6 @@ function _initHTML5Audio( format, audios, callback ) {
     audios.forEach(function(asset) {
         _preload( asset );
     });
-
 }
 
 // Initializes audio and loads audio files
@@ -166,13 +161,22 @@ function initAudio( audios, callback ) {
     var AudioContext = window.webkitAudioContext || window.mozAudioContext || window.MSAudioContext || window.AudioContext;
 
     if ( AudioContext ) {
+        $('#audio_debug').text('WebAudio Supported');
         // Browser supports webaudio
         // https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
         return _initWebAudio( AudioContext, format, audios, callback );
-    } else {
+    } else if ( elem ) {
+        $('#audio_debug').text('HTML5 Audio Supported');
         // HTML5 Audio
         // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#the-audio-element
         return _initHTML5Audio(format, audios, callback);
+    } else {
+        $('#audio_debug').text('Audio NOT Supported');
+        // audio not supported
+        audios.forEach(function(item) {
+            item.play = function() {}; // dummy play
+        });
+        callback();
     }
 }
 
