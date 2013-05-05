@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html manifest="slots.appcache">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+
+    <meta name="interface" content="desktop"/>
+
+    <title>Slots</title>
+
+    <link type='text/css' rel='stylesheet' href="css/webfonts.css"/>
+    <link type="text/css" rel="stylesheet" href="css/reset.css"/>
+    <link type="text/css" rel="stylesheet" href="css/slot.css"/>
+
+</head>
+<body>
+<div id="viewport">
+    <div id="container">
+        <div id="header">
+            <h1>Slots Machine</h1>
+
+            <h3>Play and Win</h3>
+        </div>
+        <div id="reels">
+            <canvas id="canvas1" width="70" height="300"></canvas>
+            <canvas id="canvas2" width="70" height="300"></canvas>
+            <canvas id="canvas3" width="70" height="300"></canvas>
+            <div id="overlay">
+                <div id="winline"></div>
+            </div>
+            <div id="results">
+                <div id="score">
+                    <span id="multiplier">0</span> x <img src="img/gold-64.png"/>
+                </div>
+                <div id="status"></div>
+            </div>
+            <!-- Loading overlay -->
+            <div id="loading">
+                <p>Loading..</p>
+                <div id="progressbar">
+                    <div id="progress"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="buttons">
+            <div id="play" class="button button-default">Play</div>
+        </div>
+
+        <div id="audio_debug">Audio not supported</div>
+        <div id="online_debug">Detecting online status</div>
+    </div>
+
+    <input id="debug" type="button" value="Toggle Reels"/>
+</div>
+<script src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/slot.js"></script>
+<script type="text/javascript">$(function () {
+
+    var game = SlotGame();
+
+    // Attempt loading static json file from server to detect online or offline mode.
+    // The url has unique random parameter to avoid browser or proxy caches
+    $.ajax({
+        url: 'js/online.json?ts=' + (~~new Date()),
+        dataType: 'json',
+        success: function(data) { 
+            if ( data.online ) { 
+                game.setOnlineStatus(true);
+            } else {
+                // might be online, but we didn't get expected response. Could be
+                // e.g. Wifi login page.
+                game.setOnlineStatus(false);
+            }
+        },
+        error: function() {
+            game.setOnlineStatus(false);
+        }
+    });
+
+});</script>
+</body>
+</html>

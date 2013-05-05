@@ -1,0 +1,30 @@
+CACHE MANIFEST
+# version 10
+
+NETWORK:
+# here goes resources that must be never cached
+js/online.json
+
+CACHE:
+audio/nowin.mp3
+audio/nowin.ogg
+audio/roll.mp3
+audio/roll.ogg
+audio/slot.mp3
+audio/slot.ogg
+audio/win.mp3
+audio/win.ogg
+css/webfonts.css
+css/reset.css
+css/slot.css
+css/Slackey.ttf
+img/build-64.png
+img/cash-64.png
+img/energy-64.png
+img/gold-64.png
+img/goods-64.png
+img/loading.gif
+img/staff-64.png
+js/slot.js
+js/jquery.min.js
+index.html

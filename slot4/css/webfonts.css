@@ -1,0 +1,7 @@
+/* Originally from http://fonts.googleapis.com/css?family=Slackey */
+@font-face {
+  font-family: 'Slackey';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Slackey'), url(Slackey.ttf) format('truetype');
+}
