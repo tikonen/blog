@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# version 10
+# version 11
 
 NETWORK:
 # here goes resources that must be never cached
@@ -23,7 +23,6 @@ img/cash-64.png
 img/energy-64.png
 img/gold-64.png
 img/goods-64.png
-img/loading.gif
 img/staff-64.png
 js/slot.js
 js/jquery.min.js
