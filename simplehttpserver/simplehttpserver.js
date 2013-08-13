@@ -97,11 +97,11 @@ function directoryHTML( res, urldir, pathname, list ) {
         q.push(item);
     });
     q.drain = function() {
-       sendHTML(ulist);
+		// Finished checking files, send the response
+		sendHTML(ulist);
     };
 }
 
 // Fire up server
 mainapp.listen(8000);
 console.log('Listening port 8000 root dir ' + dir );
-

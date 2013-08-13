@@ -2,13 +2,18 @@
   "name": "simplehttpserver",
   "description": "Simple HTTP Server for static files",
   "author": "Teemu Ikonen <teemu.ikonen@ıki.fi>",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "bin": "./cli.js",
+  "engine": "node >= 0.8.0",
   "dependencies": {
       "send": ">=0.1.0",
       "express": ">=3.0.0",
       "async": ">= 0.2.6"
   },
-  "engine": "node >= 0.8.0"
+  "license": "MIT",
+  "repository" : { 
+    "type" : "git",
+    "url" : "https://github.com/tikonen/blog/tree/master/simplehttpserver"
+  }
 }
 
