@@ -75,12 +75,16 @@ function _initWebAudio( AudioContext, format, audios, callback ) {
                     var source = context.createBufferSource(); // creates a sound source
                     source.buffer = buffer;                    // tell the source which sound to play
                     source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-                    source.noteOn(0);                          // play the source now
+
+					// play the source now
+					// support both webkitAudioContext or standard AudioContext
+                    source.noteOn ? source.noteOn(0) : source.start(0);
                 };
                 // default volume
-                asset.gainNode = context.createGainNode();
-                asset.gainNode.connect(context.destination);
-                asset.gainNode.gain.value = 0.5;
+				// support both webkitAudioContext or standard AudioContext
+                asset.gain = context.createGain ? context.createGain() : context.createGainNode();
+                asset.gain.connect(context.destination);
+                asset.gain.gain.value = 0.5;
 
                 _check();
 
