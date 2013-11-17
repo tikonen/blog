@@ -1,0 +1,25 @@
+.bg-sprites.pause {
+	width: 53px;
+	background: url(sprites.png) no-repeat -108px -75px;
+	height: 42px;
+}
+.bg-sprites.status_bar {
+	width: 496px;
+	background: url(sprites.png) no-repeat -0px -0px;
+	height: 74px;
+}
+.bg-sprites.cannon_marker {
+	width: 43px;
+	background: url(sprites.png) no-repeat -162px -75px;
+	height: 28px;
+}
+.bg-sprites.button_plus {
+	width: 53px;
+	background: url(sprites.png) no-repeat -54px -75px;
+	height: 42px;
+}
+.bg-sprites.button_minus {
+	width: 53px;
+	background: url(sprites.png) no-repeat -0px -75px;
+	height: 43px;
+}

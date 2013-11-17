@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Example</title>
+    <style type="text/css">
+        canvas {
+            width: 600px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Canvas Example</h1>
+        <div>
+            <canvas id="thecanvas" width="600" height="400"></canvas>
+        </div>
+    </div>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+  <script type="text/javascript" src="sprites.json.js"></script>
+  <script type="text/javascript">
+      $(function() {
+          var canvas = document.getElementById('thecanvas');
+          var ctx = canvas.getContext('2d');
+          ctx.strokeStyle = 'hotpink';
+          ctx.strokeRect(0, 0, 600, 400);
+          ctx.font = '20px Arial';
+
+          // Load image and the json that defines locations
+          var sprites = new Image();
+          sprites.src = 'sprites.png';
+          sprites.addEventListener("load", function() {
+                  var assets = bg_sprites;
+
+                  // draw them all
+                  var xoffset = 5,
+                      yoffset = 25;
+
+                  for (var pic in assets) {
+                      var asset = assets[pic];
+                      ctx.fillText(pic, xoffset, yoffset-3);
+
+                      // draw image from sprite
+                      ctx.drawImage(sprites, asset.x, asset.y, asset.w, asset.h, xoffset, yoffset, asset.w, asset.h);
+
+                      yoffset += asset.h + 20;
+                  }
+          }, false);
+      });
+  </script>
+</body>
+</html>
