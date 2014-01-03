@@ -33,7 +33,12 @@ for (volume, conf) in BACKUP_VOLS.items():
 		daylist.append(monday - timedelta(days=c * 7))
 	# last n months (first day of month)
 	for c in range(conf['months'] - 1, -1, -1):
-		daylist.append(datetime(today.year, today.month - c, 1).date())
+		year = today.year
+		month = today.month - c
+		if month <= 0:
+			year = year - 1
+			month = 12 + month
+		daylist.append(datetime(year, month, 1).date())
 
 SNAPSHOTS = local('ec2-describe-snapshots', capture=True).split('\n')
 
