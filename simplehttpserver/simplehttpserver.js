@@ -4,15 +4,17 @@ var express = require('express'),
     fs = require('fs'),
     util = require('util'),
     async = require('async'),
-    send = require('send');
+    send = require('send'),
+    morgan = require('morgan'),
+    bodyparser = require('body-parser');
 
 var mainapp = express();
 
 // Bodyparser parses HTTP POST parameters and JSON payload
-mainapp.use(express.bodyParser());
+mainapp.use(bodyparser);
 
 // Logger for requests
-mainapp.use(express.logger());
+mainapp.use(morgan);
 
 // Serve either current or directory given as argument
 var dir = process.argv[2] || process.cwd();
