@@ -2,19 +2,18 @@ var express = require('express'),
     path = require('path'),
     url = require('url'),
     fs = require('fs'),
-    util = require('util'),
     async = require('async'),
     send = require('send'),
-    morgan = require('morgan'),
-    bodyparser = require('body-parser');
+    morgan = require('morgan');
+   // bodyparser = require('body-parser');
 
 var mainapp = express();
 
 // Bodyparser parses HTTP POST parameters and JSON payload
-mainapp.use(bodyparser);
+//mainapp.use(bodyparser);
 
 // Logger for requests
-mainapp.use(morgan);
+mainapp.use(morgan("combined"));
 
 // Serve either current or directory given as argument
 var dir = process.argv[2] || process.cwd();
@@ -38,7 +37,7 @@ mainapp.get('*', function(req, res) {
 
     fs.stat(pathname, function(err, stat) {
         // Check if path is directory
-        if ( !stat || !stat.isDirectory() ) return res.send(404);
+        if ( !stat || !stat.isDirectory() ) return res.sendStatus(404);
 
         // check for index.html
         var indexpath = path.join(pathname, 'index.html');
