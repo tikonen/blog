@@ -2,14 +2,15 @@
   "name": "simplehttpserver",
   "description": "Simple HTTP Server for static files",
   "author": "Teemu Ikonen <teemu.ikonen@ıki.fi>",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "bin": "./cli.js",
   "engine": "node >= 0.10.0",
   "dependencies": {
       "send": "0.13.x",
       "express": "4.13.x",
       "async": "0.7.x",
-      "morgan": "1.6.x"
+      "morgan": "1.6.x",
+      "yargs": "4.4.x"
   },
   "license": "MIT",
   "repository" : { 

@@ -15,9 +15,30 @@ var mainapp = express();
 // Logger for requests
 mainapp.use(morgan("combined"));
 
-// Serve either current or directory given as argument
-var dir = process.argv[2] || process.cwd();
-dir = path.resolve( dir );
+var argv = require('yargs')
+    .usage('usage: $0 <-b bindhost> <-p port> <webroot>')
+    .help('h')
+    .option('b', {
+        alias: 'bind',
+        default: '0.0.0.0',
+        describe: 'Interface to bind',
+        type: 'string'
+    })
+    .option('p', {
+        alias: 'port',
+        default: 8000,
+        describe: 'Port to listen',
+        type: 'number'
+    })
+    .argv;
+
+var bindhost = argv.b || null;
+var bindport = argv.p || 8000;
+
+// Serve either current directory or directory given as argument
+var dir = argv._[0] || process.cwd();
+var dir = path.resolve( dir );
+
 mainapp.use(express.static( dir ));
 
 // Add any dynamic handlers here
@@ -104,5 +125,5 @@ function directoryHTML( res, urldir, pathname, list ) {
 }
 
 // Fire up server
-mainapp.listen(8000);
-console.log('Listening port 8000 root dir ' + dir );
+mainapp.listen(bindport, bindhost);
+console.log('Listening ' + bindhost + ':' + bindport +' web root dir ' + dir );
