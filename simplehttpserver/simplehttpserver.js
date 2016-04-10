@@ -85,7 +85,7 @@ function directoryHTML( res, urldir, pathname, list ) {
     var ulist = [];
 
     function sendHTML( list ) {
-        res.setHeader('Content-Type', 'text/html');
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.send('<!DOCTYPE html>' +
             '<html>\n' +
             '<title>Directory listing for '+urldir+'</title>\n' +
