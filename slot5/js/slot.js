@@ -440,9 +440,9 @@ Game.prototype.checkWinLine = function()
     var matchCount = 0;
 
     // currently win is given only from icon #4
-    if (this.items1[this.result1].path == 'reel-icon-4') matchCount++;
-    if (this.items2[this.result2].path == 'reel-icon-4') matchCount++;
-    if (this.items3[this.result3].path == 'reel-icon-4') matchCount++;
+    if (this.items1[this.result1].id == 'reel4') matchCount++;
+    if (this.items2[this.result2].id == 'reel4') matchCount++;
+    if (this.items3[this.result3].id == 'reel4') matchCount++;
 
     return matchCount;
 };
@@ -539,7 +539,7 @@ Game.prototype.update = function () {
 
 Game.prototype.draw = function (force) {
 
-    if (this.state >= 6) return;
+    if (this.state >= STATE_RESULTS) return;
 
     // draw the spinning slots based on current state
     for (var i = 1; i <= 3; i++) {
