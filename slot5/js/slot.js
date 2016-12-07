@@ -313,11 +313,22 @@ function SlotGame() {
         // Start game loop
         game.loop();
 
-        $('#play').click(function (e) {
-            // start game on play button click
+        // function starts game
+        function _startRoll(e) {
             $('h1').text('Rolling!');
             game.audios.roll.play();
             game.restart();
+        }
+
+        // start game on play button click
+        $('#play').click(_startRoll);
+        // start game on key press
+        $(window).keypress(function (e) {
+            if (e.which === 0 || e.which === 32) {
+                // space button pressed
+                e.preventDefault();
+                _startRoll();
+            }
         });
     }
 
