@@ -244,7 +244,8 @@ function SlotGame() {
         'reel6': {path: 'reels/reel-icon-6'}, // Played when reel stops on this icon
         'win2': {path: '2ofaKind'}, // Played on 2 of a kind
         'win3': {path: '3ofaKind'}, // Played on 3 of a kind
-        'nowin': {path: '1TryAgain'}  // Played on loss
+        'nowin1': {path: '1TryAgain'},  // Played on 1 of a kind
+        'nowin': {path: 'nowin'}  // Played on loss
     };
 
     $('canvas').attr('height', IMAGE_HEIGHT * ITEM_COUNT * 2);
@@ -524,6 +525,9 @@ Game.prototype.update = function () {
                 this.audios.win3.play();
             } else if (matches == 2) {
                 this.audios.win2.play();
+            } else if (matches == 1) {
+                // only one of a kind
+                this.audios.nowin1.play();
             } else {
                 // Play no-win sound
                 this.audios.nowin.play();
