@@ -248,6 +248,13 @@ function SlotGame() {
         'nowin': {path: 'nowin'}  // Played on loss
     };
 
+    var isMobile = (/android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(navigator.userAgent.toLowerCase()));
+    if(isMobile) {
+        audios.intro = { path: 'SoundSlotsIntroMobile'};
+    } else {
+        audios.intro = { path: 'SoundSlotsIntro'};
+    }
+
     $('canvas').attr('height', IMAGE_HEIGHT * ITEM_COUNT * 2);
     $('canvas').css('height', IMAGE_HEIGHT * ITEM_COUNT * 2);
 
@@ -330,6 +337,9 @@ function SlotGame() {
                 _startRoll();
             }
         });
+
+        // Play intro
+        game.audios.intro.play();
     }
 
 
