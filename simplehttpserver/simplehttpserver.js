@@ -4,6 +4,7 @@ var express = require('express'),
     fs = require('fs'),
     async = require('async'),
     send = require('send'),
+    https = require('https'),
     morgan = require('morgan');
    // bodyparser = require('body-parser');
 
@@ -127,3 +128,14 @@ function directoryHTML( res, urldir, pathname, list ) {
 // Fire up server
 mainapp.listen(bindport, bindhost);
 console.log('Listening ' + bindhost + ':' + bindport +' web root dir ' + dir );
+
+/*
+var options = {
+    key: fs.readFileSync('./server.key'),
+    cert: fs.readFileSync('./server.crt'),
+};
+
+var server = https.createServer(options, mainapp).listen(8090, function(err) {
+	console.log('Listening SSL port 8090 status:', err);
+});
+*/
