@@ -1,0 +1,15 @@
+Temp/
+Library/
+AssetStore/
+AssetStore.meta
+Test/
+Test.meta
+obj/
+.DS_Store
+*.csproj
+*.pidb
+*.unityproj
+*.sln
+*.userprefs
+*.apk
+*.class
