@@ -5,6 +5,7 @@ var express = require('express'),
     async = require('async'),
     send = require('send'),
     https = require('https'),
+    escape = require('querystring').escape,
     morgan = require('morgan');
    // bodyparser = require('body-parser');
 
@@ -81,17 +82,31 @@ mainapp.get('*', function(req, res) {
     });
 });
 
+function htmlsafe( str ) {
+  var tbl = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  };
+  var safestr = '';
+  for(var i=0; i < str.length; i++) {
+    safestr += tbl[str[i]] || str[i];
+  }
+  return safestr;
+}
+
 // Reads directory content and builds HTML response
 function directoryHTML( res, urldir, pathname, list ) {
     var ulist = [];
-
     function sendHTML( list ) {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.send('<!DOCTYPE html>' +
             '<html>\n' +
-            '<title>Directory listing for '+urldir+'</title>\n' +
+            '<title>Directory listing for '+htmlsafe(urldir)+'</title>\n' +
             '<body>\n' +
-            '<h2>Directory listing for '+urldir+'</h2>\n' +
+            '<h2>Directory listing for '+htmlsafe(urldir)+'</h2>\n' +
             '<hr><ul>\n' +
             list.join('\n') +
             '</ul><hr>\n' +
@@ -108,10 +123,12 @@ function directoryHTML( res, urldir, pathname, list ) {
     var q = async.queue(function(item, cb) {
         fs.stat(path.join(pathname, item), function(err, stat) {
            if ( !stat ) cb();
+           var link = escape(item);
+           item = htmlsafe(item);
            if ( stat.isDirectory() ) {
-               ulist.push('<li><a href="'+item+'/">'+item+'/</a></li>')
+               ulist.push('<li><a href="'+link+'/">'+item+'/</a></li>')
            } else {
-               ulist.push('<li><a href="'+item+'">'+item+'</a></li>')
+               ulist.push('<li><a href="'+link+'">'+item+'</a></li>')
            }
             cb();
         });
