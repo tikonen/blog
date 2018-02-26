@@ -21,16 +21,13 @@ class PTestPlugin : MonoBehaviour
     [DllImport("ptest")]
     private static extern int AcceptStrArray(IntPtr array, int size);
 
-    [DllImport("ptest")]
-    [return: MarshalAs(UnmanagedType.LPStr)] // automatically deallocates the return string with CoTaskMemFree
-    private static extern string ReturnDynamicStr();
-    
-    [DllImport("ptest")]
-    private static extern IntPtr ReturnConstStr();
-
+    // automatically deallocates the return string with CoTaskMemFree
     [DllImport("ptest")]
     [return: MarshalAs(UnmanagedType.LPStr)]
-    private static extern string[] ReturnDynamicStrArray();
+    private static extern string ReturnDynamicStr();
+
+    [DllImport("ptest")]
+    private static extern IntPtr ReturnConstStr();
 
     [DllImport("ptest")]
     private static extern IntPtr ReturnDynamicByteArray(ref int size);
@@ -75,7 +72,7 @@ class PTestPlugin : MonoBehaviour
     private static extern ExamplePoint ReturnStruct();
 
     private static IntPtr MarshalStringArray(string[] strArr)
-    {        
+    {
         IntPtr[] dataArr = new IntPtr[strArr.Length];
         for (int i = 0; i < strArr.Length; i++)
         {
@@ -101,8 +98,8 @@ class PTestPlugin : MonoBehaviour
     }
 
     private static void CleanUpNativeStrArray(IntPtr dataPtr, int arraySize)
-    {        
-        var dataPtrArray = new IntPtr[arraySize];        
+    {
+        var dataPtrArray = new IntPtr[arraySize];
         Marshal.Copy(dataPtr, dataPtrArray, 0, arraySize);
         for (int i = 0; i < arraySize; i++)
         {
@@ -146,7 +143,7 @@ class PTestPlugin : MonoBehaviour
         print("s1=" + s1);
 
         // return constant string
-        string s2 = Marshal.PtrToStringAnsi(ReturnConstStr());        
+        string s2 = Marshal.PtrToStringAnsi(ReturnConstStr());
         print("s2=" + s2);
 
         // return dynamically allocated byte array
@@ -165,7 +162,7 @@ class PTestPlugin : MonoBehaviour
 
         // string array as parameter
         dataPtr = MarshalStringArray(new String[] { "foo1", "foo2", "foo3" });
-        int len = AcceptStrArray(dataPtr, arraySize);        
+        int len = AcceptStrArray(dataPtr, arraySize);
         print("len=" + len);
         CleanUpNativeStrArray(dataPtr, arraySize);
         //strArray = MarshalStringArray(dataPtr, 3);
@@ -195,13 +192,13 @@ class PTestPlugin : MonoBehaviour
         ExamplePoint p = ReturnStruct();
 
         // Marshal array of point objects
-        arraySize = 0;        
+        arraySize = 0;
         dataPtr = ReturnArrayOfPoints(ref arraySize);
         ExamplePoint[] pointArr = new ExamplePoint[arraySize];
 
         // memory layout
         // |float|float|float|float|float|float|float|float|float|float..
-        // |   ExamplePoint0 |   ExamplePoint1 |   ExamplePoint2 | 
+        // |   ExamplePoint0 |   ExamplePoint1 |   ExamplePoint2 |
         int offset = 0;
         int pointSize = Marshal.SizeOf(typeof(ExamplePoint));
         for(int i=0; i < arraySize; i++)
