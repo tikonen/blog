@@ -7,7 +7,7 @@ var express = require('express'),
     https = require('https'),
     escape = require('querystring').escape,
     morgan = require('morgan');
-   // bodyparser = require('body-parser');
+    // bodyparser = require('body-parser');
 
 var mainapp = express();
 
@@ -38,10 +38,10 @@ var bindhost = argv.b || null;
 var bindport = argv.p || 8000;
 
 // Serve either current directory or directory given as argument
-var dir = argv._[0] || process.cwd();
-var dir = path.resolve( dir );
+var webroot = argv._[0] || process.cwd();
+webroot = path.resolve( webroot );
 
-mainapp.use(express.static( dir ));
+mainapp.use(express.static( webroot ));
 
 // Add any dynamic handlers here
 //mainapp.get('/ajax', function(req, res) {
@@ -55,8 +55,27 @@ mainapp.use(express.static( dir ));
 // file matched directory, this tries to find first index.html and if that fails it builds
 // the directory listing.
 mainapp.get('*', function(req, res) {
-   var pathname = url.parse(req.url).pathname;
-   pathname = path.join(dir, pathname);
+    var pathname = url.parse(req.url).pathname;
+
+    // check that pathname does not contain relative elements
+    // e.g.
+    //  ../foo/bar
+    // /../foo/bar
+    // /foo/../bar
+    // /foo/..
+    if(pathname.search(/(\/|^)\.\.(\/|$)/) != -1) {
+        return res.sendStatus(404);
+    }
+
+    pathname = path.join(webroot, pathname);
+
+    // check that the requested path resides inside the webroot
+    var relative = path.relative(webroot, pathname);
+    // following check allows filenames like '...'
+    if(relative.startsWith(".." + path.sep) || relative == "..") {
+        // requested path is outside webroot
+        return res.sendStatus(404);
+    }
 
     fs.stat(pathname, function(err, stat) {
         // Check if path is directory
@@ -65,36 +84,36 @@ mainapp.get('*', function(req, res) {
         // check for index.html
         var indexpath = path.join(pathname, 'index.html');
         fs.stat(indexpath, function(err, stat) {
-           if ( stat && stat.isFile() ) {
-               // index.html was found, serve that
-               send(res, indexpath)
-                   .pipe(res);
-               return;
+            if ( stat && stat.isFile() ) {
+                // index.html was found, serve that
+                send(res, indexpath)
+                    .pipe(res);
+                return;
 
-           } else {
-               // No index.html found, build directory listing
-               fs.readdir(pathname, function(err, list) {
-                  if ( err ) return res.send(404);
-                  return directoryHTML( res, req.url, pathname, list );
-               });
-           }
+            } else {
+                // No index.html found, build directory listing
+                fs.readdir(pathname, function(err, list) {
+                    if ( err ) return res.send(404);
+                    return directoryHTML( res, req.url, pathname, list );
+                });
+            }
         });
     });
 });
 
 function htmlsafe( str ) {
-  var tbl = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-  };
-  var safestr = '';
-  for(var i=0; i < str.length; i++) {
-    safestr += tbl[str[i]] || str[i];
-  }
-  return safestr;
+    var tbl = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    };
+    var safestr = '';
+    for(var i=0; i < str.length; i++) {
+        safestr += tbl[str[i]] || str[i];
+    }
+    return safestr;
 }
 
 // Reads directory content and builds HTML response
@@ -103,15 +122,15 @@ function directoryHTML( res, urldir, pathname, list ) {
     function sendHTML( list ) {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
         res.send('<!DOCTYPE html>' +
-            '<html>\n' +
-            '<title>Directory listing for '+htmlsafe(urldir)+'</title>\n' +
-            '<body>\n' +
-            '<h2>Directory listing for '+htmlsafe(urldir)+'</h2>\n' +
-            '<hr><ul>\n' +
-            list.join('\n') +
-            '</ul><hr>\n' +
-            '</body>\n' +
-            '</html>');
+        '<html>\n' +
+        '<title>Directory listing for '+htmlsafe(urldir)+'</title>\n' +
+        '<body>\n' +
+        '<h2>Directory listing for '+htmlsafe(urldir)+'</h2>\n' +
+        '<hr><ul>\n' +
+        list.join('\n') +
+        '</ul><hr>\n' +
+        '</body>\n' +
+        '</html>');
     }
 
     if ( !list.length ) {
@@ -122,14 +141,14 @@ function directoryHTML( res, urldir, pathname, list ) {
     // Check for each file if it's a directory or a file
     var q = async.queue(function(item, cb) {
         fs.stat(path.join(pathname, item), function(err, stat) {
-           if ( !stat ) cb();
-           var link = escape(item);
-           item = htmlsafe(item);
-           if ( stat.isDirectory() ) {
-               ulist.push('<li><a href="'+link+'/">'+item+'/</a></li>')
-           } else {
-               ulist.push('<li><a href="'+link+'">'+item+'</a></li>')
-           }
+            if ( !stat ) cb();
+            var link = escape(item);
+            item = htmlsafe(item);
+            if ( stat.isDirectory() ) {
+                ulist.push('<li><a href="'+link+'/">'+item+'/</a></li>')
+            } else {
+                ulist.push('<li><a href="'+link+'">'+item+'</a></li>')
+            }
             cb();
         });
     }, 4);
@@ -137,14 +156,14 @@ function directoryHTML( res, urldir, pathname, list ) {
         q.push(item);
     });
     q.drain = function() {
-		// Finished checking files, send the response
-		sendHTML(ulist);
+        // Finished checking files, send the response
+        sendHTML(ulist);
     };
 }
 
 // Fire up server
 mainapp.listen(bindport, bindhost);
-console.log('Listening ' + bindhost + ':' + bindport +' web root dir ' + dir );
+console.log('Listening ' + bindhost + ':' + bindport +' web root dir ' + webroot );
 
 /*
 var options = {
@@ -153,6 +172,6 @@ var options = {
 };
 
 var server = https.createServer(options, mainapp).listen(8090, function(err) {
-	console.log('Listening SSL port 8090 status:', err);
+    console.log('Listening SSL port 8090 status:', err);
 });
 */
