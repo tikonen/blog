@@ -1,0 +1,23 @@
+﻿---
+BasedOnStyle: Google
+AccessModifierOffset: '-4'
+AlignAfterOpenBracket: AlwaysBreak
+AlignTrailingComments: 'true'
+AllowShortBlocksOnASingleLine: 'false'
+AllowShortIfStatementsOnASingleLine: 'true'
+BreakBeforeBraces: Linux
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: '160'
+ConstructorInitializerIndentWidth: '4'
+ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
+Cpp11BracedListStyle: 'true'
+IndentWidth: '4'
+DerivePointerAlignment: false
+PointerAlignment: Right
+TabWidth: '4'
+UseTab: ForIndentation
+FixNamespaceComments: 'false'
+NamespaceIndentation: Inner
+MaxEmptyLinesToKeep: 2
+
+...
