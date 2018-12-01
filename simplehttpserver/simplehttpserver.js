@@ -32,6 +32,12 @@ var argv = require('yargs')
         describe: 'Port to listen',
         type: 'number'
     })
+    .option('m', {
+        alias: 'mime',
+        describe: 'Define a custom mime type',
+        type: 'string'
+    })
+
     .argv;
 
 var bindhost = argv.b || null;
@@ -40,6 +46,22 @@ var bindport = argv.p || 8000;
 // Serve either current directory or directory given as argument
 var webroot = argv._[0] || process.cwd();
 webroot = path.resolve( webroot );
+
+// define additional mime types
+express.static.mime.define({"application/wasm": ["wasm"]});
+express.static.mime.define({"text/cache-manifest": ["appcache"]});
+
+// Define custom mime types from cli args
+for(var k in argv.mime) {
+    console.log("Custom mime types");
+    var def = {};
+    var suffix = argv.mime[k];
+    if(suffix != "") {
+        def[k] = suffix.split(',');
+        console.log("*." + def[k],"mime type",k);
+        express.static.mime.define(def)
+    }
+}
 
 mainapp.use(express.static( webroot ));
 

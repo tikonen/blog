@@ -1,20 +1,28 @@
 {
   "name": "simplehttpserver",
   "description": "Simple HTTP Server for static files. Intended as testing and development tool",
+  "keywords": [
+    "http",
+    "web",
+    "server",
+    "testing",
+    "simple",
+    "development"
+  ],
   "author": "Teemu Ikonen <teemu.ikonen@ıki.fi>",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "bin": "./cli.js",
   "engine": "node >= 0.10.0",
   "dependencies": {
-      "send": "0.13.x",
-      "express": "4.13.x",
-      "async": "0.7.x",
-      "morgan": "1.6.x",
-      "yargs": "4.4.x"
+    "async": "0.7.x",
+    "express": "^4.16.4",
+    "morgan": "^1.9.1",
+    "send": "^0.16.2",
+    "yargs": "4.4.x"
   },
   "license": "MIT",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/tikonen/blog/tree/master/simplehttpserver"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tikonen/blog/tree/master/simplehttpserver"
   }
 }
