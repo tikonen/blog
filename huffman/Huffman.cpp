@@ -1,9 +1,5 @@
-#include <windows.h>
 
 #include <assert.h>
-
-#undef max
-#undef min
 
 #include <algorithm>
 
@@ -101,9 +97,9 @@ bool HuffmanDecoder::Initialize(std::array<HuffmanCode, 256> codes)
 
 bool HuffmanDecoder::DecodeData(unsigned char *pSrc, size_t size, size_t decodedSize, std::vector<unsigned char> &data)
 {
-	BYTE prev = 0;
+	unsigned char prev = 0;
 	size_t i = 0;
-	BYTE in = pSrc[i++];
+	unsigned char in = pSrc[i++];
 	int bitCount = 0;
 	DecodeNode *node = &m_DecodeTree[0];
 
@@ -123,7 +119,7 @@ bool HuffmanDecoder::DecodeData(unsigned char *pSrc, size_t size, size_t decoded
 		}
 		if (node->Leaf()) {
 			// write decoded byte out and start over
-			data.emplace_back(prev = (BYTE)(node->Value + prev));
+			data.emplace_back(prev = (unsigned char)(node->Value + prev));
 			node = &m_DecodeTree[0];
 		} else {
 			// traverse encoding tree
@@ -198,17 +194,17 @@ bool HuffmanEncoder::Initialize(std::array<HuffmanCode, 256> codes)
 	return true;
 }
 
-bool HuffmanEncoder::EncodeData(const BYTE *pSrc, unsigned int size, std::vector<BYTE> &data)
+bool HuffmanEncoder::EncodeData(const unsigned char *pSrc, unsigned int size, std::vector<unsigned char> &data)
 {
-	BYTE prev = 0;
-	DWORD out = 0;
+	unsigned char prev = 0;
+	unsigned int out = 0;
 	int bitCount = CHAR_BIT * sizeof(out);
 
 	data.reserve(data.size() + size);  // worst case allocation
 
 	for (unsigned int i = 0; i < size; i++) {
 		// get the huffman code for the next byte
-		const HuffmanCode &huff = m_CodeTable[(BYTE)(pSrc[i] - prev)];
+		const HuffmanCode &huff = m_CodeTable[(unsigned char)(pSrc[i] - prev)];
 		prev = pSrc[i];
 		int len = huff.Len;
 		uint32_t code = huff.Code;
@@ -225,7 +221,7 @@ bool HuffmanEncoder::EncodeData(const BYTE *pSrc, unsigned int size, std::vector
 				// encoded chunk is completed, write out
 				size_t pos = data.size();
 				data.resize(pos + sizeof(out));
-				out = _byteswap_ulong(out);
+				out = bswap_32(out);
 				memcpy(&data[pos], &out, sizeof(out));  // compiler will optimize this to a single instruction
 
 				// start a new one
@@ -247,7 +243,7 @@ bool HuffmanEncoder::EncodeData(const BYTE *pSrc, unsigned int size, std::vector
 		data.resize(pos + size);
 		// Loop is lot faster than byteswapping first and then memcpy.
 		for (int i = 0; i < size; i++) {
-			data[pos + i] = ((BYTE *)&out)[3 - i];
+			data[pos + i] = ((unsigned char *)&out)[3 - i];
 		}
 	}
 	return true;
@@ -255,7 +251,7 @@ bool HuffmanEncoder::EncodeData(const BYTE *pSrc, unsigned int size, std::vector
 
 struct TreeNode {
 	int Value;
-	DWORD Freq;
+	unsigned int Freq;
 	TreeNode *pLeft;
 	TreeNode *pRight;
 
@@ -267,7 +263,7 @@ struct TreeNode {
 	{
 	}
 
-	inline void MakeLeaf(DWORD freq, int value)
+	inline void MakeLeaf(unsigned int freq, int value)
 	{
 		Freq = freq;
 		Value = value;
@@ -292,11 +288,11 @@ struct _TreeNodeCompare {
 std::array<unsigned int, 256> HuffmanEncoder::Histogram(unsigned char *pSrc, unsigned int size)
 {
 	// compute histogram of the data
-	BYTE prev = 0;
+	unsigned char prev = 0;
 	std::array<unsigned int, 256> histogram{0};
 
 	for (unsigned int i = 0; i < size; i++) {
-		histogram[(BYTE)(pSrc[i] - prev)]++;
+		histogram[(unsigned char)(pSrc[i] - prev)]++;
 		prev = pSrc[i];
 	}
 	return histogram;
@@ -350,7 +346,7 @@ std::array<HuffmanEncoder::HuffmanCode, 256> HuffmanEncoder::BuildCodes(std::arr
 	TreeNode *root = heap.top();
 
 	// Tree traveller to build the codes
-	std::function<void(BYTE, const TreeNode *, uint32_t)> Travel = [&](BYTE depth, const TreeNode *n, uint32_t c) {
+	std::function<void(unsigned char, const TreeNode *, uint32_t)> Travel = [&](unsigned char depth, const TreeNode *n, uint32_t c) {
 		if (n->Leaf()) {
 			HuffmanCode code{c, depth};
 			codeTable[n->Value] = code;
@@ -375,7 +371,7 @@ std::array<HuffmanEncoder::HuffmanCode, 256> HuffmanEncoder::BuildCodes(std::arr
 void TestEncoder()
 {
 	int dataSize = 1024 * 1024;
-	BYTE *data = new BYTE[dataSize];
+	unsigned char *data = new unsigned char[dataSize];
 
 #if 0
 	for (int i = 0; i < dataSize; i++) {
@@ -414,7 +410,7 @@ void TestEncoder()
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	for (int i = 0; i < 1000; i++) {
 		// encode data
-		std::vector<BYTE> enctmp;
+		std::vector<unsigned char> enctmp;
 		henc.EncodeData(data, dataSize, enctmp);
 		enctmp.resize(0);
 	}
@@ -433,7 +429,7 @@ void TestEncoder()
 	while (true) {
 	};
 #endif
-	std::vector<BYTE> enc;
+	std::vector<unsigned char> enc;
 	henc.EncodeData(data, dataSize, enc);
 
 	/*
@@ -441,21 +437,22 @@ void TestEncoder()
 	    HuffmanEncoder henc2;
 	    auto codes2 = henc2.BuildCodes(enc.data(), enc.size(), false);
 	    henc2.Initialize(codes2);
-	    std::vector<BYTE> enc2;
+	    std::vector<unsigned char> enc2;
 	    henc2.EncodeData(enc.data(), enc.size(), enc2);
 	}
 	*/
 
-	std::vector<BYTE> dec;
+	std::vector<unsigned char> dec;
 
 	HuffmanDecoder hdec;
 	hdec.Initialize(henc.GetTable());
 
 	hdec.DecodeData(enc.data(), enc.size(), dataSize, dec);
 
-	auto m = std::mismatch(data, data + dataSize, dec.begin(), dec.end());
-
-	if (m.first != data + dataSize || m.second != dec.end()) {
-		printf("Decoding failed. %X != %X", *m.first, *m.second);
+	for(int i=0; i < dataSize; i++) {
+		if(data[i] != dec[i]) {
+			printf("Decoding failed at %d. %X != %X", i, data[i], dec[i]);
+			break;
+		}
 	}
 }

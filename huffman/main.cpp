@@ -1,8 +1,7 @@
-#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
-#include <windows.h>
 
+#include <cstring>
 #include <assert.h>
 #include <cctype>
 #include <fstream>
@@ -13,8 +12,19 @@
 
 void DisplayUsage();
 void CheckArgs(int argc, int required);
-void Compress(std::vector<BYTE> &dataIn, std::vector<BYTE> &dataOut);
-bool DeCompress(std::vector<BYTE> &dataIn, std::vector<BYTE> &dataOut);
+void Compress(std::vector<unsigned char> &dataIn, std::vector<unsigned char> &dataOut);
+bool DeCompress(std::vector<unsigned char> &dataIn, std::vector<unsigned char> &dataOut);
+
+#if defined(WIN32)
+#define OPT_FLAG "/"
+#else
+#define OPT_FLAG "-"
+
+const char GetLastError() {
+	return errno;
+}
+#endif
+
 
 int main(int argc, char *argv[])
 {
@@ -27,21 +37,22 @@ int main(int argc, char *argv[])
 	const char *outfile = 0;
 	bool decompress = false;
 
-	while (**argv == '/') {
+	while (**argv == *OPT_FLAG) {
 		const char *arg = *argv;
-		if (!_stricmp(arg, "/d")) {
+		arg++;
+		if (!strcasecmp(arg, "d")) {
 			decompress = true;
 		} else
 		/*
-		if (!_strnicmp(arg, "/s:", 3)) {
+		if (!_strnicmp(arg, "s:", 2)) {
 		    // scanf_s(arg, "/%*[a-zA-Z]=%s", filepath, MAX_PATH);
 		    // scanf_s(arg, "/%*[a-zA-Z]=%d", i);
-		    stream = arg + 3;
+		    stream = arg + 2;
 		    if (!stream) {
 		        DisplayUsage();
 		    }
-		} else if (!_strnicmp(arg, "/o:", 3)) {
-		    outfile = arg + 3;
+		} else if (!_strnicmp(arg, "o:", 2)) {
+		    outfile = arg + 2;
 		} else if (!_stricmp(arg, "/h")) {
 		    headers = true;
 		} else*/
@@ -57,7 +68,7 @@ int main(int argc, char *argv[])
 	const char *filename = *argv;
 	std::ifstream in(filename, std::ios::binary);
 	if (!in) {
-		fprintf(stderr, "Cannot open file \"%hs\". %d", filename, GetLastError());
+		fprintf(stderr, "Cannot open file \"%s\". %d", filename, GetLastError());
 		exit(1);
 	}
 	in.unsetf(std::ios::skipws);
@@ -66,16 +77,16 @@ int main(int argc, char *argv[])
 	auto size = in.tellg();
 	in.seekg(0, std::ios::beg);
 
-	std::vector<BYTE> data(size);
+	std::vector<unsigned char> data(size);
 	if (!in.read((char *)data.data(), size)) {
-		fprintf(stderr, "Cannot read file \"%hs\". %d", filename, GetLastError());
+		fprintf(stderr, "Cannot read file \"%s\". %d", filename, GetLastError());
 		exit(1);
 	}
-	std::vector<BYTE> dataOut;
+	std::vector<unsigned char> dataOut;
 	if (decompress) {
 		size_t originalSize = 0;
 		if (!DeCompress(data, dataOut)) {
-			fprintf(stderr, "Error decompressing \"%hs\". File corrupted or not an valid archive.\n", filename);
+			fprintf(stderr, "Error decompressing \"%s\". File corrupted or not an valid archive.\n", filename);
 			exit(1);
 		}
 	} else {
@@ -84,15 +95,14 @@ int main(int argc, char *argv[])
 
 	std::string fileSuffix = "huff";
 
-	auto icaseCmp = [](const char &a, const char &b) { return std::tolower(a) == std::tolower(b); };
-
 	std::string outfileName(filename);
 	if (decompress) {
 		// Remove possible compressed file suffix
 		auto pos = outfileName.find_last_of(".");
 		if (pos != std::string::npos) {
 			auto suffix = outfileName.substr(pos + 1);
-			if (std::equal(suffix.begin(), suffix.end(), fileSuffix.begin(), fileSuffix.end(), icaseCmp)) {
+			std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
+			if (suffix == fileSuffix) {
 				outfileName = outfileName.substr(0, pos);
 			}
 		}
@@ -104,11 +114,11 @@ int main(int argc, char *argv[])
 
 	std::ofstream out(outfileName, std::ios::binary);
 	if (!out) {
-		fprintf(stderr, "Cannot open output file \"%hs\". %d", outfileName.c_str(), GetLastError());
+		fprintf(stderr, "Cannot open output file \"%s\". %d", outfileName.c_str(), GetLastError());
 		exit(1);
 	}
 	if (!out.write((char *)dataOut.data(), dataOut.size())) {
-		fprintf(stderr, "Cannot write file \"%hs\". %d", outfileName.c_str(), GetLastError());
+		fprintf(stderr, "Cannot write file \"%s\". %d", outfileName.c_str(), GetLastError());
 		exit(1);
 	}
 	printf("%d -> %d\n", (int)size, (int)dataOut.size());
@@ -116,9 +126,9 @@ int main(int argc, char *argv[])
 	printf("%s -> %s %.2f Ratio\n", filename, outfileName.c_str(), decompress ? 1 / ratio : ratio);
 }
 
-bool DeCompress(std::vector<BYTE> &dataIn, std::vector<BYTE> &dataOut)
+bool DeCompress(std::vector<unsigned char> &dataIn, std::vector<unsigned char> &dataOut)
 {
-	BYTE *pSrc = dataIn.data();
+	unsigned char *pSrc = dataIn.data();
 	size_t size = dataIn.size();
 
 	// read table
@@ -156,10 +166,10 @@ bool DeCompress(std::vector<BYTE> &dataIn, std::vector<BYTE> &dataOut)
 }
 
 
-void Compress(std::vector<BYTE> &dataIn, std::vector<BYTE> &dataOut)
+void Compress(std::vector<unsigned char> &dataIn, std::vector<unsigned char> &dataOut)
 {
-	BYTE *pSrc = dataIn.data();
-	DWORD size = (DWORD)dataIn.size();
+	unsigned char *pSrc = dataIn.data();
+	unsigned int size = (unsigned int)dataIn.size();
 
 	auto histogram = HuffmanEncoder::Histogram(pSrc, size);
 	auto codes = HuffmanEncoder::BuildCodes(histogram, false);
@@ -192,6 +202,6 @@ void DisplayUsage()
 	printf("Usage:\n");
 	printf("\thuffc [options] file.dat\n\n");
 	printf("\t[options]\n");
-	printf("\t/D\tDecompress\n");
+	printf("\t" OPT_FLAG "D\tDecompress\n");
 	exit(1);
 }

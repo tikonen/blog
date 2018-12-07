@@ -2,6 +2,20 @@
 
 #include <vector>
 
+#if defined(WIN32)
+#define bswap_16(x) _byteswap_ushort(x)
+#define bswap_32(x) _byteswap_ulong(x)
+#define bswap_64(x) _byteswap_uint64(x)
+#elif defined(__APPLE__)
+// Mac OS X / Darwin features
+#include <libkern/OSByteOrder.h>
+#define bswap_16(x) OSSwapInt16(x)
+#define bswap_32(x) OSSwapInt32(x)
+#define bswap_64(x) OSSwapInt64(x)
+#else
+#include <byteswap.h>
+#endif
+
 class BitStreamReader
 {
 public:
@@ -63,7 +77,7 @@ public:
 		m_Data.reserve(reserve);
 	}
 
-	void Write(DWORD value, int bitLen)
+	void Write(unsigned int value, int bitLen)
 	{
 		m_TotalBitCount += bitLen;
 
@@ -79,7 +93,7 @@ public:
 				// encoded chunk is completed, write out
 				size_t pos = m_Data.size();
 				m_Data.resize(pos + sizeof(m_Out));
-				m_Out = _byteswap_ulong(m_Out);
+				m_Out = bswap_32(m_Out);
 				memcpy(&m_Data[pos], &m_Out, sizeof(m_Out));  // compiler will optimize this to a single instruction
 
 				// start a new one

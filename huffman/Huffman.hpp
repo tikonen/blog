@@ -58,7 +58,7 @@ class HuffmanEncoder : public HuffmanBase
 {
 public:
 	bool Initialize(std::array<HuffmanCode, 256> codes);
-	bool EncodeData(const BYTE *pSrc, unsigned int size, std::vector<unsigned char> &data);
+	bool EncodeData(const unsigned char *pSrc, unsigned int size, std::vector<unsigned char> &data);
 	static std::array<unsigned int, 256> Histogram(unsigned char *pSrc, unsigned int size);
 	static std::array<HuffmanCode, 256> BuildCodes(std::array<unsigned int, 256> &histogram, bool complete);
 

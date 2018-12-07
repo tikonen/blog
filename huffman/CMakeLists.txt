@@ -17,4 +17,6 @@ set(_source_list
 	Huffman.hpp
 	main.cpp)
 
+set (CMAKE_CXX_STANDARD 11)
+
 add_executable(huffc ${_source_list})
