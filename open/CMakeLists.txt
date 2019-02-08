@@ -3,7 +3,7 @@ project(open)
 
 set(_target open)
 
-set(_src_root_path ${CMAKE_SOURCE_DIR}/open)
+set(_src_root_path ${CMAKE_SOURCE_DIR})
 
 MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
   IF(MSVC)

@@ -6,9 +6,10 @@
 
 void usage()
 {
-	wprintf(L"Opens files with the default action.\n\n");
-	wprintf(L"OPEN [/E] [filename1] [filename2] ...\n\n");
-	wprintf(L"  [/E]\tOpen in default editor\n\n");
+	wprintf(L"Opens files with the Windows default action.\n\n");
+	wprintf(L"open -e [filename1] [filename2] ...\n\n");
+	wprintf(L"  -e\tOpen in default editor\n");
+	wprintf(L"  -h\tThis help\n\n");
 	exit(0);
 }
 
@@ -21,10 +22,10 @@ int wmain(int argc, wchar_t *argv[])
 
 	bool edit = false;
 	for (int i = 1; i < argc; i++) {
-		if (!lstrcmpiW(argv[i], L"/?")) {
+		if (!lstrcmpiW(argv[i], L"/?") || !lstrcmpW(argv[i], L"-h")) {
 			usage();
 		}
-		if (!lstrcmpiW(argv[i], L"/E")) {
+		if (!lstrcmpiW(argv[i], L"/E") || !lstrcmpW(argv[i], L"-e")) {
 			edit = true;
 			continue;
 		}
